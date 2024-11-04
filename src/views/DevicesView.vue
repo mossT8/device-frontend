@@ -252,7 +252,7 @@ export default defineComponent({
 
                 const response = await fetch(`/api/account/1/device/list?${queryParams}`);
                 const data = await response.json();
-                devices.value = data.items || [];
+                devices.value = data.data || [];
                 totalItems.value = data.total || 0;
             } catch (error) {
                 console.error('Error fetching devices:', error);

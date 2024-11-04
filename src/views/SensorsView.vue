@@ -139,7 +139,7 @@ export default defineComponent({
 
                 const response = await fetch(`/api/sensor/list?${queryParams}`);
                 const data = await response.json();
-                sensors.value = data.items || [];
+                sensors.value = data.data || [];
                 totalItems.value = data.total || 0;
             } catch (error) {
                 console.error('Error fetching sensors:', error);

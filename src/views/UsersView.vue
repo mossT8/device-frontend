@@ -239,7 +239,6 @@ interface User {
 export default defineComponent({
     name: 'UsersView',
     setup() {
-        // Reactive References
         const users = ref<User[]>([]);
         const loading = ref(true);
         const searchQuery = ref('');
@@ -259,7 +258,6 @@ export default defineComponent({
             receivesUpdates: false,
         });
 
-        // Computed Properties
         const pageStart = computed(() => currentPage.value * pageSize.value);
         const pageEnd = computed(() => Math.min((currentPage.value + 1) * pageSize.value, totalItems.value));
         const hasMorePages = computed(() => pageEnd.value < totalItems.value);
@@ -276,7 +274,8 @@ export default defineComponent({
 
                 const response = await fetch(`/api/account/1/user/list?${queryParams}`);
                 const data = await response.json();
-                users.value = data.items || [];
+                users.value = data.data || [];
+                console.log('Users:', users.value);
                 totalItems.value = data.total || 0;
             } catch (error) {
                 console.error('Error fetching users:', error);
@@ -285,7 +284,6 @@ export default defineComponent({
             }
         };
 
-        // Event Handlers
         const handleSearch = () => {
             currentPage.value = 0;
             fetchUsers();
@@ -345,7 +343,6 @@ export default defineComponent({
         const submitForm = async () => {
             try {
                 if (isEditing.value && selectedUser.value) {
-                    // Update existing user
                     await fetch(`/api/account/1/user/${selectedUser.value.id}/update`, {
                         method: 'PUT',
                         headers: {
@@ -354,7 +351,6 @@ export default defineComponent({
                         body: JSON.stringify(formData.value),
                     });
                 } else {
-                    // Add new user
                     await fetch('/api/account/1/user', {
                         method: 'POST',
                         headers: {
@@ -394,14 +390,11 @@ export default defineComponent({
             }
         };
 
-        // Lifecycle Hooks
         onMounted(() => {
             fetchUsers();
         });
 
-        // Return everything needed in template
         return {
-            // State
             users,
             loading,
             searchQuery,
@@ -413,11 +406,9 @@ export default defineComponent({
             isEditing,
             selectedUser,
             formData,
-            // Computed
             pageStart,
             pageEnd,
             hasMorePages,
-            // Methods
             fetchUsers,
             handleSearch,
             nextPage,
