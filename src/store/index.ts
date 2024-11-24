@@ -8,20 +8,7 @@ interface State {
 
 export default createStore({
   state: (): State => ({
-    users: [
-      {
-        id: 1,
-        name: 'John Doe',
-        email: 'tannar.moss@gmail.com',
-        role: 'Admin',
-      },
-      {
-        id: 2,
-        name: 'John Doe',
-        email: 'tannar.moss@gmail.com',
-        role: 'Admin',
-      },
-    ],
+    users: [],
     searchQuery: '',
   }),
   getters: {

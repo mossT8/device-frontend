@@ -68,10 +68,10 @@
                                         <div class="text-sm font-medium text-gray-900">{{ device.name }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-500">{{ device.serialNumber }}</div>
+                                        <div class="text-sm text-gray-500">{{ device.serial_number }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-500">{{ device.modelId }}</div>
+                                        <div class="text-sm text-gray-500">{{ device.model_id }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <button @click="editDevice(device)"
@@ -204,14 +204,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, computed, onMounted } from 'vue';
-
-interface Device {
-    id: number;
-    name: string;
-    serialNumber: string;
-    modelId: number;
-    modelConfig: Record<string, any>;
-}
+import { Device } from '@/types/device';
 
 export default defineComponent({
     name: 'DevicesView',
@@ -254,6 +247,7 @@ export default defineComponent({
                 const data = await response.json();
                 devices.value = data.data || [];
                 totalItems.value = data.total || 0;
+                
             } catch (error) {
                 console.error('Error fetching devices:', error);
             } finally {
@@ -297,9 +291,9 @@ export default defineComponent({
             selectedDevice.value = device;
             formData.value = {
                 name: device.name,
-                serialNumber: device.serialNumber,
-                modelId: device.modelId,
-                modelConfig: device.modelConfig,
+                serialNumber: device.serial_number,
+                modelId: device.model_id,
+                modelConfig: device.model_config,
             };
             showModal.value = true;
         };

@@ -6,7 +6,7 @@ module.exports = defineConfig({
     port: 8081,
     proxy: {
       "/api": {
-        target: "http://localhost:8080", // Replace with your API server URL
+        target: "http://localhost:8080",
         changeOrigin: true,
         secure: false,
         headers: {
@@ -14,8 +14,14 @@ module.exports = defineConfig({
           "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
           "Access-Control-Allow-Headers": "Content-Type, Authorization",
         },
-        onProxyRes: function (proxyRes) {
-          proxyRes.headers["Access-Control-Allow-Origin"] = "*";
+        onProxyReq: function(proxyReq, req) {
+          if (req.headers.cookie) {
+            const tokenMatch = req.headers.cookie.match(/auth-token=([^;]+)/);
+            const token = tokenMatch ? tokenMatch[1] : null;
+            if (token) {
+              proxyReq.setHeader('Authorization', `Bearer ${token}`);
+            }
+          }
         },
       },
     },

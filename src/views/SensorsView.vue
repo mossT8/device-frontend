@@ -29,19 +29,22 @@
                                         Name</th>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Type</th>
+                                        Code</th>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Unit</th>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Value</th>
+                                        Config Required</th>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Status</th>
+                                        Default Config</th>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Last Update</th>
+                                        Modified At</th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Created At </th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
@@ -50,10 +53,30 @@
                                         <div class="text-sm font-medium text-gray-900">{{ sensor.name }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">{{ sensor.type }}</div>
+                                        <div class="text-sm text-gray-900">{{ sensor.code }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">{{ sensor.unit }}</div>
+                                        <div class="text-sm text-gray-900">{{ sensor.unit_id }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <button
+                                            @click="showConfig(`${sensor.name} - Required Config`, sensor.config_required)"
+                                            class="text-sm text-blue-600 hover:text-blue-900">
+                                            {{ getConfigPreview(sensor.config_required) }}
+                                        </button>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <button
+                                            @click="showConfig(`${sensor.name} - Default Config`, sensor.default_config)"
+                                            class="text-sm text-blue-600 hover:text-blue-900">
+                                            {{ getConfigPreview(sensor.default_config) }}
+                                        </button>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">{{ sensor.modified_at }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">{{ sensor.created_at }}</div>
                                     </td>
                                 </tr>
 
@@ -111,17 +134,64 @@
                 </div>
             </div>
         </div>
+
+        <!-- Config Modal -->
+        <ConfigModal :is-open="modalState.isOpen" :title="modalState.title" :config="modalState.config || {}"
+            @close="closeModal" />
     </div>
 </template>
 
 <script lang="ts">
+interface ModalState {
+    isOpen: boolean;
+    title: string;
+    config: Record<string, any> | null;
+}
+
 import { defineComponent, ref, computed, onMounted, watch } from 'vue';
 import { Sensor } from '@/types/sensor';
+import ConfigModal from '@/components/ConfigModal.vue';
+
 
 export default defineComponent({
     name: 'SensorsView',
+    components: {
+        ConfigModal
+    },
+    methods: {
+        showConfig(title: string, config: Record<string, any>) {
+            this.modalState = {
+                isOpen: true,
+                title,
+                config
+            };
+        },
+        closeModal() {
+            this.modalState.isOpen = false;
+        },
+        getConfigPreview(config: Record<string, any>): string {
+            if (config == null) {
+                return 'No config';
+            }
+            const entries = Object.entries(config);
+            if (entries.length === 0) return 'No config';
+
+            // Show first two entries with ellipsis if there are more
+            const preview = entries
+                .slice(0, 2)
+                .map(([key, value]) => `${key}: ${value}`)
+                .join(', ');
+
+            return entries.length > 2 ? `${preview}, ...` : preview;
+        }
+    },
     setup() {
         const sensors = ref<Sensor[]>([]);
+        const modalState = ref<ModalState>({
+                isOpen: false,
+                title: '',
+                config: null
+            });
         const searchQuery = ref('');
         const loading = ref(true);
         const currentPage = ref(0);
@@ -187,6 +257,7 @@ export default defineComponent({
 
         return {
             sensors,
+            modalState,
             searchQuery,
             loading,
             filteredSensors,
