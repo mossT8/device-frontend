@@ -1,0 +1,171 @@
+/* src/assets/styles/shared.css */
+    /* Layout patterns */
+    .layout-container {
+      @apply min-h-screen bg-gray-100 py-6;
+    }
+  
+    .content-wrapper {
+      @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+    }
+  
+    .card {
+      @apply bg-white rounded-lg shadow-md;
+    }
+  
+    .card-header {
+      @apply p-6 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4;
+    }
+  
+    /* Page title patterns */
+    .page-title {
+      @apply text-xl font-semibold text-gray-800;
+    }
+  
+    /* Button patterns */
+    .btn {
+      @apply inline-flex items-center px-4 py-2 border rounded-md shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors;
+    }
+  
+    .btn-primary {
+      @apply btn border-transparent text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-500;
+    }
+  
+    .btn-secondary {
+      @apply btn border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:ring-blue-500;
+    }
+  
+    .btn-danger {
+      @apply btn border-transparent text-white bg-red-600 hover:bg-red-700 focus:ring-red-500;
+    }
+  
+    /* Form patterns */
+    .form-input {
+      @apply mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 
+             focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none;
+    }
+  
+    .form-label {
+      @apply block text-sm font-medium text-gray-700 mb-1;
+    }
+  
+    .search-input {
+      @apply pl-10 pr-4 py-2 border border-gray-300 rounded-md shadow-sm 
+             focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none 
+             w-full sm:w-64 transition-all;
+    }
+  
+    /* Table patterns */
+    .table-container {
+      @apply overflow-x-auto;
+    }
+  
+    .table-base {
+      @apply min-w-full divide-y divide-gray-200;
+    }
+  
+    .table-header {
+      @apply bg-gray-50;
+    }
+  
+    .table-th {
+      @apply px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider;
+    }
+  
+    .table-td {
+      @apply px-6 py-4 whitespace-nowrap text-sm;
+    }
+  
+    .table-row {
+      @apply hover:bg-gray-50;
+    }
+  
+    /* Modal patterns */
+    .modal-wrapper {
+      @apply fixed z-10 inset-0 overflow-y-auto;
+    }
+  
+    .modal-container {
+      @apply flex items-center justify-center min-h-screen p-4;
+    }
+  
+    .modal-backdrop {
+      @apply fixed inset-0 bg-gray-500 bg-opacity-75;
+    }
+  
+    .modal-content {
+      @apply relative bg-white rounded-lg w-full max-w-md p-6;
+    }
+  
+    /* Status badges */
+    .status-badge {
+      @apply px-2 inline-flex text-xs leading-5 font-semibold rounded-full;
+    }
+  
+    .status-active {
+      @apply bg-green-100 text-green-800;
+    }
+  
+    .status-inactive {
+      @apply bg-gray-100 text-gray-800;
+    }
+  
+    /* Actions container */
+    .actions-container {
+      @apply flex justify-end space-x-3;
+    }
+  
+    /* Flex layouts */
+    .flex-between {
+      @apply flex items-center justify-between;
+    }
+  
+    .flex-center {
+      @apply flex items-center justify-center;
+    }
+  
+    /* Grid layouts */
+    .grid-forms {
+      @apply grid grid-cols-1 gap-6 sm:grid-cols-2;
+    }
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+    
+    .table {
+        min-inline-size: 100%;
+        border-spacing: 0;
+        
+        .table-header {
+            padding: 0.75rem 1.5rem;
+            text-align: start;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            color: theme('colors.gray.500');
+            background-color: theme('colors.gray.50');
+            letter-spacing: 0.05em;
+            border-block-end: 1px solid theme('colors.gray.200');
+        }
+    
+        .table-row, &tr {
+            &:hover {
+                background-color: theme('colors.gray.50');
+            }
+            border-block-end: 1px solid theme('colors.gray.200');
+        }
+    
+        .table-cell {
+            padding: 1rem 1.5rem;
+            white-space: nowrap;
+            color: theme('colors.gray.500');
+    
+            &--center {
+                text-align: center;
+            }
+        }
+    
+        tbody {
+            background-color: white;
+        }
+    }

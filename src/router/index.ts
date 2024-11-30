@@ -36,16 +36,6 @@ const routes: Array<RouteRecordRaw> = [
     component: UsersView,
     meta: { requiresAuth: true }
   },
-  {
-    path: "/about",
-    name: "about",
-    meta: { requiresAuth: false },
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
-  },
 ];
 
 const router = createRouter({
@@ -63,11 +53,9 @@ router.beforeEach((
       .split('; ')
       .find(row => row.startsWith('auth-token='))
       ?.split('=')[1]
-    console.log('running');
+
     
     if (!token) {
-      console.log('ran');
-
       next({ name: 'login' })
     } else {
       next()

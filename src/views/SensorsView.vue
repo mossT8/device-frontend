@@ -150,7 +150,7 @@ interface ModalState {
 
 import { defineComponent, ref, computed, onMounted, watch } from 'vue';
 import { Sensor } from '@/types/sensor';
-import ConfigModal from '@/components/ConfigModal.vue';
+import ConfigModal from '@/components/config/ConfigModal.vue';
 
 
 export default defineComponent({

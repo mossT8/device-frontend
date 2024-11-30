@@ -1,215 +1,102 @@
 <template>
-    <div class="min-h-screen bg-gray-100">
-        <div class="py-6">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="bg-white rounded-lg shadow-md">
+    <div class="page-container">
+        <div class="content-wrapper">
+            <div class="content-container">
+                <div class="card">
                     <!-- Header Section -->
-                    <div class="p-6 border-b border-gray-200">
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                            <h2 class="text-xl font-semibold text-gray-800">Devices</h2>
-                            <div class="flex flex-col sm:flex-row gap-4">
-                                <div class="relative">
-                                    <input v-model="searchQuery" type="text" placeholder="Search devices..."
-                                        class="pl-10 pr-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none w-full sm:w-64 transition-all"
-                                        @input="handleSearch" />
-                                    <svg class="absolute left-3 top-2.5 h-5 w-5 text-gray-400"
-                                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd"
-                                            d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                                <button @click="openAddModal"
-                                    class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                    <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg"
-                                        viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd"
-                                            d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                    Add Device
-                                </button>
-                            </div>
+                    <div class="card-header">
+                        <h2 class="page-title">Devices</h2>
+                        <div class="flex gap-4">
+                            <SearchInput v-model="searchQuery" placeholder="Search Devices... " />
+                            <button @click="openAddModal" class="btn-primary">
+                                <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                    fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                        d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                Add Device
+                            </button>
                         </div>
                     </div>
 
                     <!-- Table Section -->
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Name</th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Serial Number</th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Model ID</th>
-                                    <th
-                                        class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                <tr v-if="loading" class="hover:bg-gray-50">
-                                    <td colspan="4" class="px-6 py-4 text-center text-gray-500">
-                                        Loading devices...
-                                    </td>
-                                </tr>
-                                <tr v-else-if="devices.length === 0" class="hover:bg-gray-50">
-                                    <td colspan="4" class="px-6 py-4 text-center text-gray-500">
-                                        No devices found
-                                    </td>
-                                </tr>
-                                <tr v-for="device in devices" :key="device.id" class="hover:bg-gray-50">
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm font-medium text-gray-900">{{ device.name }}</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-500">{{ device.serial_number }}</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-500">{{ device.model_id }}</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                        <button @click="editDevice(device)"
-                                            class="text-blue-600 hover:text-blue-900 mr-4">
-                                            Edit
-                                        </button>
-                                        <button @click="confirmDelete(device)" class="text-red-600 hover:text-red-900">
-                                            Delete
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <SharedTable :loading="loading" :items="devices" :columns="columns">
+                        <template #default="{ items }">
+                            <div v-for="device in devices" :key="device.id" class="table-row">
+                                <div class="table-cell">
+                                    {{ device.name }}
+                                </div>
+                                <div class="table-cell">
+                                    {{ device.serial_number }}
+                                </div>
+                                <div class="table-cell">
+                                    {{ device.model_id }}
+                                </div>
+                                <div class="table-cell">
+                                    <button @click="editDevice(device)" class="btn-secondary mr-1">Edit</button>
+                                    <button @click="handleDelete(device)" class="btn-danger">Delete</button>
+                                </div>
+                            </div>
+                        </template>
+                    </SharedTable>
 
                     <!-- Pagination -->
-                    <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
-                        <div class="flex-1 flex justify-between sm:hidden">
-                            <button @click="prevPage" :disabled="currentPage === 0"
-                                class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                                :class="{ 'opacity-50 cursor-not-allowed': currentPage === 0 }">
-                                Previous
-                            </button>
-                            <button @click="nextPage" :disabled="!hasMorePages"
-                                class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                                :class="{ 'opacity-50 cursor-not-allowed': !hasMorePages }">
-                                Next
-                            </button>
-                        </div>
-                        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-                            <div>
-                                <p class="text-sm text-gray-700">
-                                    Showing
-                                    <span class="font-medium">{{ pageStart + 1 }}</span>
-                                    to
-                                    <span class="font-medium">{{ pageEnd }}</span>
-                                    of
-                                    <span class="font-medium">{{ totalItems }}</span>
-                                    results
-                                </p>
-                            </div>
-                            <div>
-                                <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
-                                    <button @click="prevPage" :disabled="currentPage === 0"
-                                        class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
-                                        :class="{ 'opacity-50 cursor-not-allowed': currentPage === 0 }">
-                                        Previous
-                                    </button>
-                                    <button @click="nextPage" :disabled="!hasMorePages"
-                                        class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
-                                        :class="{ 'opacity-50 cursor-not-allowed': !hasMorePages }">
-                                        Next
-                                    </button>
-                                </nav>
-                            </div>
-                        </div>
-                    </div>
+                    <SharedPagination :current-page="currentPage" :total-items="totalItems" :page-size="pageSize" />
                 </div>
             </div>
         </div>
 
         <!-- Add/Edit Modal -->
-        <div v-if="showModal" class="fixed z-10 inset-0 overflow-y-auto">
-            <div class="flex items-center justify-center min-h-screen p-4">
-                <div class="fixed inset-0 bg-gray-500 bg-opacity-75" @click="closeModal"></div>
-                <div class="relative bg-white rounded-lg w-full max-w-md p-6">
-                    <h3 class="text-lg font-medium text-gray-900 mb-4">
-                        {{ isEditing ? 'Edit Device' : 'Add New Device' }}
-                    </h3>
-                    <form @submit.prevent="submitForm">
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700">Name</label>
-                                <input v-model="formData.name" type="text" required
-                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500" />
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700">Serial Number</label>
-                                <input v-model="formData.serialNumber" type="text" required
-                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500" />
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700">Model ID</label>
-                                <input v-model.number="formData.modelId" type="number" required
-                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500" />
-                            </div>
-                        </div>
-                        <div class="mt-6 flex justify-end space-x-3">
-                            <button type="button"
-                                class="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                                @click="closeModal">
-                                Cancel
-                            </button>
-                            <button type="submit"
-                                class="inline-flex justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                {{ isEditing ? 'Update' : 'Add' }}
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+        <Modal v-model="showModal">
+            <template #title>
+                {{ isEditing ? 'Edit Device' : 'Add New Device' }}
+            </template>
+
+            <template #default>
+                <DeviceForm :device="formData" @close="closeModal" />
+            </template>
+        </Modal>
+
 
         <!-- Delete Confirmation Modal -->
-        <div v-if="showDeleteModal" class="fixed z-10 inset-0 overflow-y-auto">
-            <div class="flex items-center justify-center min-h-screen p-4">
-                <div class="fixed inset-0 bg-gray-500 bg-opacity-75" @click="closeDeleteModal"></div>
-                <div class="relative bg-white rounded-lg w-full max-w-md p-6">
-                    <h3 class="text-lg font-medium text-gray-900 mb-4">Delete Device</h3>
-                    <p class="text-sm text-gray-500 mb-4">
-                        Are you sure you want to delete this device? This action cannot be undone.
-                    </p>
-                    <div class="mt-6 flex justify-end space-x-3">
-                        <button type="button"
-                            class="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                            @click="closeDeleteModal">
-                            Cancel
-                        </button>
-                        <button type="button"
-                            class="inline-flex justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                            @click="deleteDevice">
-                            Delete
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <ConfirmDialog v-model="confirmDelete.showing.value" v-bind="confirmDelete.options" :message="deleteText"
+            @confirm="confirmDelete.confirm" @cancel="confirmDelete.cancel" />
     </div>
 </template>
 
 <script lang="ts">
+// components
+import Modal from '@/components/shared/Modal.vue';
+import DeviceForm from '@/components/device/DeviceForm.vue';
+import SearchInput from '@/components/shared/SearchInput.vue';
+import SharedTable from '@/components/shared/Table.vue';
+import SharedPagination from '@/components/shared/Pagination.vue';
+import ConfirmDialog from '@/components/shared/ConfirmDialog.vue';
+
+// types and functions
+import { useConfirmDialog } from '@/composables/useConfirm';
 import { defineComponent, ref, computed, onMounted } from 'vue';
 import { Device } from '@/types/device';
+import { TableColumn } from '@/types/tableColumn';
+import { useModal } from '@/composables/useModal';
 
 export default defineComponent({
     name: 'DevicesView',
+    components: {
+        DeviceForm,
+        SearchInput,
+        SharedTable,
+        SharedPagination,
+        ConfirmDialog,
+        Modal
+    },
     setup() {
         // Reactive References
+        const addOrUpdatePopUp = useModal();
+        const deletePopUp = useConfirmDialog();
+        const deleteText = computed<string>(() => deletePopUp.options.value.message)
+
         const devices = ref<Device[]>([]);
         const loading = ref(true);
         const searchQuery = ref('');
@@ -220,12 +107,21 @@ export default defineComponent({
         const showDeleteModal = ref(false);
         const isEditing = ref(false);
         const selectedDevice = ref<Device | null>(null);
+        const columns = ref<TableColumn[]>([
+            { key: 'name', label: 'Name' },
+            { key: 'serial_number', label: 'Serial Number' },
+            { key: 'model_id', label: 'Model ID' },
+            { key: 'actions', label: 'Actions', align: 'right' }
+        ]);
 
-        const formData = ref({
+        const formData = ref<Device>({
             name: '',
-            serialNumber: '',
-            modelId: 0,
-            modelConfig: {},
+            serial_number: '',
+            model_id: 0,
+            model_config: {},
+            id: 0,
+            created_at: '',
+            modified_at: ''
         });
 
         // Computed Properties
@@ -247,7 +143,7 @@ export default defineComponent({
                 const data = await response.json();
                 devices.value = data.data || [];
                 totalItems.value = data.total || 0;
-                
+
             } catch (error) {
                 console.error('Error fetching devices:', error);
             } finally {
@@ -260,6 +156,10 @@ export default defineComponent({
             currentPage.value = 0;
             fetchDevices();
         };
+
+        const closeModal = () => {
+            showModal.value = false
+        }
 
         const nextPage = () => {
             if (hasMorePages.value) {
@@ -279,35 +179,46 @@ export default defineComponent({
             isEditing.value = false;
             formData.value = {
                 name: '',
-                serialNumber: '',
-                modelId: 0,
-                modelConfig: {},
+                serial_number: '',
+                model_id: 0,
+                model_config: {},
+                id: 0,
+                created_at: '',
+                modified_at: ''
             };
             showModal.value = true;
         };
 
-        const editDevice = (device: Device) => {
+        const handleDelete = async (device: Device) => {
+            try {
+                const confirmed = await deletePopUp.show({
+                    title: 'Delete Device',
+                    message: `Are you sure you want to delete ${device.name}? This action cannot be undone.`,
+                    confirmText: 'Delete',
+                    cancelText: 'Cancel',
+                    type: 'danger'
+                });
+
+                if (confirmed) {
+                    await fetch(`/api/account/1/device/${device.id}`, {
+                        method: 'DELETE'
+                    });
+                    // Handle successful deletion
+                }
+            } catch (error) {
+                console.error('Error deleting device:', error);
+            }
+        };
+
+
+        const editDevice = async (device: Device) => {
             isEditing.value = true;
             selectedDevice.value = device;
-            formData.value = {
-                name: device.name,
-                serialNumber: device.serial_number,
-                modelId: device.model_id,
-                modelConfig: device.model_config,
-            };
-            showModal.value = true;
+            formData.value = device;
+            showModal.value = true
         };
 
-        const closeModal = () => {
-            showModal.value = false;
-            selectedDevice.value = null;
-            formData.value = {
-                name: '',
-                serialNumber: '',
-                modelId: 0,
-                modelConfig: {},
-            };
-        };
+
 
         const submitForm = async () => {
             try {
@@ -330,36 +241,13 @@ export default defineComponent({
                         body: JSON.stringify(formData.value),
                     });
                 }
-                closeModal();
                 fetchDevices();
             } catch (error) {
                 console.error('Error saving device:', error);
             }
         };
 
-        const confirmDelete = (device: Device) => {
-            selectedDevice.value = device;
-            showDeleteModal.value = true;
-        };
 
-        const closeDeleteModal = () => {
-            showDeleteModal.value = false;
-            selectedDevice.value = null;
-        };
-
-        const deleteDevice = async () => {
-            if (!selectedDevice.value) return;
-
-            try {
-                await fetch(`/api/account/1/device/${selectedDevice.value.id}`, {
-                    method: 'DELETE',
-                });
-                closeDeleteModal();
-                fetchDevices();
-            } catch (error) {
-                console.error('Error deleting device:', error);
-            }
-        };
 
         // Lifecycle Hooks
         onMounted(() => {
@@ -369,6 +257,9 @@ export default defineComponent({
         // Return everything needed in template
         return {
             // State
+            deleteText,
+            confirmDelete: deletePopUp,
+            columns,
             devices,
             loading,
             searchQuery,
@@ -386,16 +277,14 @@ export default defineComponent({
             hasMorePages,
             // Methods
             fetchDevices,
+            handleDelete,
             handleSearch,
             nextPage,
             prevPage,
+            closeModal,
             openAddModal,
             editDevice,
-            closeModal,
             submitForm,
-            confirmDelete,
-            closeDeleteModal,
-            deleteDevice,
         };
     },
 });
